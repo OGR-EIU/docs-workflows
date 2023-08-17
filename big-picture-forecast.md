@@ -4,23 +4,27 @@
 ```mermaid
 sequenceDiagram
     participant PREM as Pre-model transformer
+    participant REPF as Filtering report
     participant DWH as Data warehouse
     participant GLOB as Global model
     participant CTRY as Country model
     participant AGGR as Aggregator of FD
 
-    DWH -->> PREM: Historical data
-    PREM -->> DWH: Trend-cycle filtering
+    loop Individual countries
+        DWH -->> PREM: Historical data
+        PREM -->> DWH: Trend-cycle filtering
+    end
 
-    DWH -->> GLOB: Historical data + Trend-cycle data
-    GLOB -->> DWH: Global forecast
+    DWH ->> REPF: Historical data + Trend-cycle filtering {US, EA, CZ}
 
-    DWH -->> AGGR: Global forecast
-    AGGR -->> DWH: Country-specific foreign demand
+    DWH -->> GLOB: Historical data + Trend-cycle data + Previous foreign demand {US, EA}
+    GLOB -->> DWH: Global forecast {W0, US, EA}
 
-    DWH -->> CTRY: Historical data + Trend-cycle data + Foreign demand
-    CTRY -->> DWH: Country forecast
+    DWH -->> AGGR: Global forecast {US, EA}
+    AGGR -->> DWH: Country-specific foreign demand {US, EA, CZ}
 
-    DWH -->> AGGR: Country forecasts
-    AGGR -->> DWH: Country-specific foreign demand
+    loop Individual countries
+        DWH -->> CTRY: Historical data + Trend-cycle data + Foreign demand
+        CTRY -->> DWH: Country forecast
+    end
 ```
