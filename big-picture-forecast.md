@@ -1,4 +1,3 @@
-
 # Big picture of forecast workflow
 
 ```mermaid
@@ -13,21 +12,21 @@ sequenceDiagram
     participant CTRY as Country model
     participant AGGR as Aggregator of FD
     participant FORR as Forecast report
-    participant CSVF as Export CSV
+    participant SNPR as Snapshot report
+    participant SNPF as Export snapshot
 
     loop Daily, nondaily and manual pumps
         SRC -->> PUMP: Data acquisition {CNB, ECB, FRED, manual}
-        PUMP -->> DWH: Data submition into DWH
+        PUMP -->> DWH: Acquired data
         DWH -->> TRAN: Post-pump data transformation
-        TRAN -->> DWH: Data submition into DWH
+        TRAN -->> DWH: Transformed data
     end
 
     loop Individual countries
         DWH -->> PREM: Historical data
         PREM -->> DWH: Trend-cycle filtering
+        DWH ->> FILR: Historical data + Trend-cycle filtering {US, EA, CZ}
     end
-
-    DWH ->> FILR: Historical data + Trend-cycle filtering {US, EA, CZ}
 
     DWH -->> GLOB: Historical data + Trend-cycle data + Previous foreign demand {US, EA}
     GLOB -->> DWH: Global forecast {W0, US, EA}
@@ -38,9 +37,9 @@ sequenceDiagram
     loop Individual countries
         DWH -->> CTRY: Historical data + Trend-cycle data + Foreign demand
         CTRY -->> DWH: Country forecast
+        DWH -->> FORR: Country forecast
     end
 
-	DWH -->> FORR: Forecast report
-
-	DWH -->> CSVF: Export CSV
+	DWH -->> SNPR: Data snapshot
+	DWH -->> SNPF: Data snapshot
 ```
