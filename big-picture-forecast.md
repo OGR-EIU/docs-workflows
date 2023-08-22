@@ -13,7 +13,7 @@ sequenceDiagram
     participant AGGR as Aggregator of FD
     participant FORR as Forecast report
     participant SNPR as Snapshot report
-    participant SNPF as Export snapshot
+    participant SNPF as Snapshot export
 
     loop Daily, nondaily and manual pumps
         SRC -->> PUMP: Data acquisition {CNB, ECB, FRED, manual}
