@@ -1,5 +1,33 @@
 # Pump workflow
 
+## Sequence diagram
+
+```mermaid
+sequenceDiagram
+	participant SRC as Data sources
+	participant CNBP as CNB data pump
+	participant ECBP as ECB data pump
+	participant FRDP as FRED data pump
+	participant MANP as Manual data pump
+	participant DWH as Data warehouse
+	participant TRAN as Post-pump transformer
+
+    loop Daily, nondaily and manual pumps
+        SRC -->> CNBP: Data acquisition
+        SRC -->> ECBP: Data acquisition
+        SRC -->> FRDP: Data acquisition
+        SRC -->> MANP: Data acquisition
+        CNBP -->> DWH: Acquired data
+        ECBP -->> DWH: Acquired data
+        FRDP -->> DWH: Acquired data
+        MANP -->> DWH: Acquired data
+        DWH -->> TRAN: Post-pump data transformation
+        TRAN -->> DWH: Transformed data
+    end
+```
+
+## Flowchart
+
 ```mermaid
 flowchart TD
 	WKP[Pump settings] -.CNB settings.-> CNB[CNB pump] -.Extracted data.-> API[API Client]
