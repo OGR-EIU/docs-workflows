@@ -15,6 +15,8 @@ sequenceDiagram
     participant SNPR as Snapshot report
     participant SNPF as Snapshot export
 
+	autonumber
+
     loop Daily, nondaily and manual pumps
         SRC -->> PUMP: Data acquisition {CNB, ECB, FRED, manual}
         PUMP -->> DWH: Acquired data
