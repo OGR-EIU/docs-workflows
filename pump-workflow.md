@@ -12,6 +12,8 @@ sequenceDiagram
 	participant DWH as Data warehouse
 	participant TRAN as Post-pump transformer
 
+	autonumber
+
     loop Daily, nondaily and manual pumps
         SRC -->> CNBP: Data acquisition
         SRC -->> ECBP: Data acquisition
