@@ -1,44 +1,56 @@
 # Forecast workflow
 
+
 ## Orchestration diagram
 
 ```mermaid
 sequenceDiagram
-	participant USA as Analyst
+	actor REV as Reviewer
+	actor USA as Analyst
 	participant ORC as Orchestration platform
-        participant WKM as Main branch
-	participant LOC as Local environment
-	participant USC as Checker
+        box rgb(60,40,40) Forecast Workflow Repo
+        	participant WKM as Main branch
+		participant WKF as Forecast branch
+		participant WKA as Analyst forecast branch
+	end
+	participant USC as Forecast validator
+        participant DWH as Data warehouse
 	
 
 	autonumber
 
-    loop Individual countries
 		USA -->> ORC: Forecast round initializing
-                create participant WKF as Forecast branch
-		ORC -->> WKF: Forecast branch prepared
-                create participant WKA as Analyst forecast branch
-		ORC -->> WKA: Analyst branch prepared
-		WKA -->> LOC: Local environment created + configs
+                Note over WKF: Life begins
+		ORC -->> WKF: Forecast branch created
+		Note over WKA: Life begins
+		ORC -->> WKA: Analyst forecast branch created
+		WKA -->> USA: Local environment created + configs
+                DWA -->> USA: Input data retrieved
 		critical Local forecast
-			LOC -->> LOC: Data + model + model infrastructure
+			USA -->> USA: Data + model + model infrastructure
 		end
-		Note over LOC, LOC: No data submission
 
-		LOC -->> WKA: Forecast judgements pushed
-		WKA -->> ORC: Changes trigger approval procedure
-		critical Pre-approval forecast
-			ORC -->> ORC: Data + model + model infrastructure
-		end
-		Note over ORC, ORC: No data submission
-		ORC -->> USC: Forecast sent for approval
-		USC -->> WKF: Forecast approved
+		USA -->> WKA: Forecast submittecd: Analyst judgment as code pushed
+                WKA -->> ORC: Notification
+                DWA -->> ORC: Input data retrieved
+                critical Forecast reproduced
+                         ORC -->> ORC: Data + model + model infra + analyst judgment
+                end
+                ORC -->> USC: Request for mechanical forecast validation
+                USC -->> ORC: Forecast validated
+                ORC -->> WKA: Merge request created
+	        ORC -->> WKF:  
+                ORC -->> REV: Request for review and acceptance emailed
+		REV -->> WKF: Forecast accepted, merge request executed
+                REV -->> WKA:  
+                Note over WKA: Life ends
 		WKF -->> ORC: Forecast submission
-		critical Post-approval forecast
-			ORC -->> ORC: Data + model + model infrastructure
-		end
-		Note over ORC, ORC: Data submission
-    end
+                DWA -->> ORC: Input data retrieved
+                critical Forecast reproduced
+                         ORC -->> ORC: Data + model + model infra + analyst judgment
+                end
+		Note over ORC, DWH: Data submission
+                ORC -->> DWH: Data stored in DWH
 ```
 
 ## Data-producing diagram
@@ -62,3 +74,8 @@ sequenceDiagram
 		Note over INF, DWH: Data submission only post-approval
     end
 ```
+
+## Local environment dependencies
+
+* Matlab R2021b or later
+* Python 3.11 with the `requests` package installed
