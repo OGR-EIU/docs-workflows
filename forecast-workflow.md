@@ -25,14 +25,14 @@ sequenceDiagram
 		Note over WKA: Life begins
 		ORC -->> WKA: Analyst forecast branch created
 		WKA -->> USA: Local environment created + configs
-                DWA -->> USA: Input data retrieved
+                DWH -->> USA: Input data retrieved
 		critical Local forecast
 			USA -->> USA: Data + model + model infrastructure
 		end
 
 		USA -->> WKA: Forecast submittecd: Analyst judgment as code pushed
                 WKA -->> ORC: Notification
-                DWA -->> ORC: Input data retrieved
+                DWH -->> ORC: Input data retrieved
                 critical Forecast reproduced
                          ORC -->> ORC: Data + model + model infra + analyst judgment
                 end
@@ -45,7 +45,7 @@ sequenceDiagram
                 REV -->> WKA:  
                 Note over WKA: Life ends
 		WKF -->> ORC: Forecast submission
-                DWA -->> ORC: Input data retrieved
+                DWH -->> ORC: Input data retrieved
                 critical Forecast reproduced
                          ORC -->> ORC: Data + model + model infra + analyst judgment
                 end
