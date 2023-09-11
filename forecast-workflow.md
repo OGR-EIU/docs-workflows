@@ -6,16 +6,18 @@
 sequenceDiagram
 	participant USA as Analyst
 	participant ORC as Orchestration platform
-	participant WKA as Analyst branch
+        participant WKM as Main branch
 	participant LOC as Local environment
 	participant USC as Checker
-	participant WKF as Forecast branch
+	
 
 	autonumber
 
     loop Individual countries
 		USA -->> ORC: Forecast round initializing
+                create participant WKF as Forecast branch
 		ORC -->> WKF: Forecast branch prepared
+                create participant WKA as Analyst forecast branch
 		ORC -->> WKA: Analyst branch prepared
 		WKA -->> LOC: Local environment created + configs
 		critical Local forecast
